@@ -5,9 +5,8 @@ import {
   personalGetExpenseById,
   personalUpdateExpense,
   personalDeleteExpense,
-  getAllExpenses,
 } from "../controllers/expenseController.js";
-import { protect } from "../middlewares/authMiddleware.js"; // Assuming routes are protected
+import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 

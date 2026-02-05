@@ -26,7 +26,7 @@ export const registerUser = async (req, res) => {
       success: true,
       token: generateToken(user._id),
       user: {
-        id: user._id,
+        _id: user._id,
         username: user.username,
         email: user.email,
       },
@@ -63,7 +63,7 @@ export const loginUser = async (req, res) => {
       success: true,
       token: generateToken(user._id),
       user: {
-        id: user._id,
+        _id: user._id,
         username: user.username,
         email: user.email,
       },
@@ -78,23 +78,10 @@ export const loginUser = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
-    if (!req.user?.id) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      });
-    }
-
-    const user = await User.findById(req.user.id).select("-password");
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    res.json({ success: true, user });
+    res.json({
+      success: true,
+      user: req.user,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
