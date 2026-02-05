@@ -2,49 +2,99 @@ import User from "../models/User.js";
 import { generateToken } from "../config/genrateToken.js";
 
 export const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  try {
+    const { username, email, password } = req.body;
 
-  if (!username || !email || !password)
-    return res
-      .status(400)
-      .json({ success: false, message: "All fields required" });
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields required",
+      });
+    }
 
-  if (await User.findOne({ email }))
-    return res
-      .status(409)
-      .json({ success: false, message: "Email already exists" });
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "Email already exists",
+      });
+    }
 
-  const user = await User.create({ username, email, password });
+    const user = await User.create({ username, email, password });
 
-  res.status(201).json({
-    success: true,
-    token: generateToken(user._id),
-    user: { id: user._id, username, email },
-  });
+    res.status(201).json({
+      success: true,
+      token: generateToken(user._id),
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Registration failed",
+    });
+  }
 };
 
 export const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  if (!email || !password)
-    return res
-      .status(400)
-      .json({ success: false, message: "Missing credentials" });
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing credentials",
+      });
+    }
 
-  const user = await User.findOne({ email }).select("+password");
-  if (!user || !(await user.comparePassword(password)))
-    return res
-      .status(401)
-      .json({ success: false, message: "Invalid credentials" });
+    const user = await User.findOne({ email }).select("+password");
 
-  res.json({
-    success: true,
-    token: generateToken(user._id),
-    user: { id: user._id, username: user.username, email },
-  });
+    if (!user || !(await user.comparePassword(password))) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    res.json({
+      success: true,
+      token: generateToken(user._id),
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Login failed",
+    });
+  }
 };
 
 export const getMe = async (req, res) => {
-  const user = await User.findById(req.user.id).select("-password");
-  res.json({ success: true, user });
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+
+    res.json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch user",
+    });
+  }
+};
+
+export const logoutUser = async (req, res) => {
+  res.json({
+    success: true,
+    message: "Logged out successfully",
+  });
 };
