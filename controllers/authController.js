@@ -78,12 +78,23 @@ export const loginUser = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
     const user = await User.findById(req.user.id).select("-password");
 
-    res.json({
-      success: true,
-      user,
-    });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.json({ success: true, user });
   } catch (error) {
     res.status(500).json({
       success: false,

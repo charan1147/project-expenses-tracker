@@ -6,7 +6,7 @@ import morgan from "morgan";
 import connectDB from "./config/db.js"; 
 import errorHandler from "./middlewares/errorHandler.js";
 import userRoutes from "./routes/authRoutes.js"; 
-import expenseRoutes from "./routes/personalExpenseRoutes.js"; 
+import PersonalExpenses from "./routes/personalExpenseRoutes.js"
 import groupRoutes from "./routes/groupRoutes.js"; 
 
 dotenv.config(); 
@@ -27,7 +27,7 @@ app.use(
 );
 
 app.use("/api/users", userRoutes); 
-app.use("/api/expenses", expenseRoutes); 
+app.use("/api/personal-expenses", PersonalExpenses);
 app.use("/api/groups", groupRoutes);
 
 
