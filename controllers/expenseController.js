@@ -130,20 +130,3 @@ export const personalDeleteExpense = async (req, res) => {
   }
 };
 
-export const getAllExpenses = async (req, res) => {
-  try {
-    const expenses = await Expense.find().populate("userId", "username email");
-
-    if (!expenses.length) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No expenses found" });
-    }
-
-    res.status(200).json({ success: true, data: expenses });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server Error: " + error.message });
-  }
-};

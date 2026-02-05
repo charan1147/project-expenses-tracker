@@ -16,6 +16,5 @@ router.get("/", protect, personalGetExpensesAll);
 router.get("/:id", protect, personalGetExpenseById);
 router.put("/:id", protect, personalUpdateExpense);
 router.delete("/:id", protect, personalDeleteExpense);
-router.get("/admin/all", protect, getAllExpenses);
 
 export default router;
