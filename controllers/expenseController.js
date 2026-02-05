@@ -2,30 +2,29 @@ import Expense from "../models/Expense.js";
 
 export const personalAddExpense = async (req, res) => {
   try {
-    const { amount, category, date, description } = req.body;
+     const { amount, category, date, description } = req.body;
 
-    if (!amount || !category || !date || isNaN(amount)) {
-      return res.status(400).json({
-        success: false,
-        message: "Valid amount, category, and date are required",
-      });
-    }
+     if (!amount || !category || !date)
+       return res
+         .status(400)
+         .json({ success: false, message: "Missing fields" });
 
-    const expense = await Expense.create({
-      userId: req.user.id,
-      amount,
-      category,
-      date: new Date(date),
-      description,
-    });
+     const expense = await Expense.create({
+       userId: req.user.id,
+       amount,
+       category,
+       date,
+       description,
+     });
 
-    res.status(201).json({ success: true, data: expense });
+     res.status(201).json({ success: true, data: expense });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server Error: " + error.message });
+     res
+       .status(500)
+       .json({ success: false, message: "Server Error: " + error.message });
   }
-};
+}
+
 
 export const personalGetExpensesAll = async (req, res) => {
   try {
