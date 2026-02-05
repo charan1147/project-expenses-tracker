@@ -28,21 +28,24 @@ export const personalAddExpense = async (req, res) => {
 
 export const personalGetExpensesAll = async (req, res) => {
   try {
-    const expenses = await Expense.find({ userId: req.user.id }).sort({
-      date: -1,
-    });
-
-    if (!expenses.length) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No expenses found" });
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      });
     }
 
-    res.status(200).json({ success: true, data: expenses });
+    const expenses = await Expense.find({ userId: req.user.id });
+
+    res.status(200).json({
+      success: true,
+      data: expenses,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server Error: " + error.message });
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch personal expenses",
+    });
   }
 };
 
